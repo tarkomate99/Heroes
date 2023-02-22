@@ -57,6 +57,7 @@ struct ContentView: View {
                             URLImage(urlString: hero.imageURL, data: nil)
                             Text(hero.name)
                                 .font(.system(size: 17))
+                                .frame(maxWidth: .infinity)
                             NavigationLink(destination: MapView(latitude: State(initialValue: hero.latitude), logitude: State(initialValue: hero.longitude), hero: State(initialValue: hero))){
                                 EmptyView()
                             }
@@ -64,6 +65,8 @@ struct ContentView: View {
                     }
                 }
                 .navigationTitle("Heroes")
+                .frame(maxWidth: .infinity)
+                .listStyle(GroupedListStyle())
                 .onAppear{
                     viewModel.fetch()
                 }
