@@ -12,6 +12,7 @@ import MapKit
 
 struct MapView: View {
     
+    @State var hero: Hero;
     @State var latitude: Double;
     @State var longitude: Double;
     var span: MKCoordinateSpan = MKCoordinateSpan(
@@ -19,19 +20,21 @@ struct MapView: View {
     
     @State var region: MKCoordinateRegion;
     
-    init(latitude:State<Double>, logitude:State<Double>){
+    init(latitude:State<Double>, logitude:State<Double>, hero:State<Hero>){
         _latitude = latitude
         _longitude = logitude
         _region = State(initialValue: MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: latitude.wrappedValue, longitude: logitude.wrappedValue),
             span: self.span))
+        _hero = hero
     }
     
     @StateObject var viewModel = ViewModel()
     
     var body: some View {
         VStack{
-            Text("Text")
+            Text(self.hero.name)
+                .font(.system(size: 17)).bold()
             Map(coordinateRegion: $region, annotationItems: viewModel.locations.filter {
                 $0.location.longitude == self.longitude && $0.location.latitude == self.latitude
             }) { loc in
@@ -48,10 +51,12 @@ struct MapView: View {
                     .frame(width: 26, height: 26)
                     .clipShape(Circle())
                 }
-            }.onAppear{
+            }
+            .ignoresSafeArea()
+            .onAppear{
                 viewModel.fetch()
             }
-        }
+        }.navigationBarBackButtonHidden(true)
         
     }
 }
