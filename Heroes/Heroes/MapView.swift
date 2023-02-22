@@ -8,12 +8,23 @@
 import SwiftUI
 import MapKit
 
+struct Location: Identifiable{
+    let id = UUID()
+    let latitude: Double
+    let longitude: Double
+}
+
+struct JSONdata{
+    let locations: [Location]
+}
+
 struct MapView: View {
     
     @State var latitude: Double;
     @State var longitude: Double;
+    @State private var locations: [Location] = []
     var span: MKCoordinateSpan = MKCoordinateSpan(
-        latitudeDelta: 0.009, longitudeDelta: 0.009)
+        latitudeDelta: 0.001, longitudeDelta: 0.001)
     
     @State var region: MKCoordinateRegion;
     
@@ -26,7 +37,13 @@ struct MapView: View {
     }
     
     var body: some View {
-        Map(coordinateRegion: $region)
+        Map(coordinateRegion: $region, annotationItems: locations) { loc in
+            MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: loc.latitude, longitude: loc.longitude)){
+                Image(systemName: "star.fill")
+                    .foregroundColor(.red)
+                    .shadow(radius: 1)
+            }
+        }
     }
     
 }
