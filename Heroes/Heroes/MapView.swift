@@ -8,23 +8,14 @@
 import SwiftUI
 import MapKit
 
-struct Location: Identifiable{
-    let id = UUID()
-    let latitude: Double
-    let longitude: Double
-}
 
-struct JSONdata{
-    let locations: [Location]
-}
 
 struct MapView: View {
     
     @State var latitude: Double;
     @State var longitude: Double;
-    @State private var locations: [Location] = []
     var span: MKCoordinateSpan = MKCoordinateSpan(
-        latitudeDelta: 0.001, longitudeDelta: 0.001)
+        latitudeDelta: 0.0009, longitudeDelta: 0.0009)
     
     @State var region: MKCoordinateRegion;
     
@@ -36,15 +27,32 @@ struct MapView: View {
             span: self.span))
     }
     
+    @StateObject var viewModel = ViewModel()
+    
     var body: some View {
-        Map(coordinateRegion: $region, annotationItems: locations) { loc in
-            MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: loc.latitude, longitude: loc.longitude)){
-                Image(systemName: "star.fill")
-                    .foregroundColor(.red)
-                    .shadow(radius: 1)
+        VStack{
+            Text("Text")
+            Map(coordinateRegion: $region, annotationItems: viewModel.locations.filter {
+                $0.location.longitude == self.longitude && $0.location.latitude == self.latitude
+            }) { loc in
+                MapAnnotation(coordinate: loc.location){
+                    AsyncImage(url: URL(string: loc.imageURL)) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .overlay(RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color(hex: 0xc82626), lineWidth: 1))
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 26, height: 26)
+                    .clipShape(Circle())
+                }
+            }.onAppear{
+                viewModel.fetch()
             }
         }
+        
     }
-    
 }
     

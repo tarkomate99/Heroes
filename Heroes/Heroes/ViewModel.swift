@@ -19,9 +19,17 @@ struct Hero: Codable, Hashable {
     let longitude: Double
 }
 
+struct Locations: Identifiable {
+    let id = UUID()
+    let imageURL: String
+    let location: CLLocationCoordinate2D
+}
+
+
 class ViewModel: ObservableObject{
     
     @Published var heroes: [Hero] = []
+    @Published var locations: [Locations] = []
     
     func fetch(){
         guard let url = URL(string: "http://www.mocky.io/v2/5addd58b30000066154b28c9") else {
@@ -37,6 +45,11 @@ class ViewModel: ObservableObject{
                 let heroes = try JSONDecoder().decode(Returned.self, from: data)
                 DispatchQueue.main.async {
                     self?.heroes = heroes.avengers
+                    for hero in heroes.avengers {
+                        let coord = CLLocationCoordinate2D(latitude: hero.latitude, longitude: hero.longitude)
+                        self?.locations.append(Locations(imageURL: hero.imageURL, location: coord))
+                        print(coord)
+                    }
                 }
             }
             catch {
