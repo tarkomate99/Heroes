@@ -56,7 +56,7 @@ struct ContentView: View {
                             URLImage(urlString: hero.imageURL, data: nil)
                             Text(hero.name)
                                 .font(.system(size: 17))
-                            NavigationLink(destination: MapView(hero: hero)){
+                            NavigationLink(destination: MapView(latitude: State(initialValue: hero.latitude), logitude: State(initialValue: hero.longitude))){
                                 EmptyView()
                             }
                         }

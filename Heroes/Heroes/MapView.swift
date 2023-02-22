@@ -2,24 +2,32 @@
 //  MapView.swift
 //  Heroes
 //
-//  Created by mac on 2023. 02. 21..
+//  Created by mac on 2023. 02. 22..
 //
 
 import SwiftUI
 import MapKit
+
 struct MapView: View {
     
-    let hero: Hero
-    @State private var latitude: Double = 0.0
-    @State private var longitude: Double = 0.0
+    @State var latitude: Double;
+    @State var longitude: Double;
+    var span: MKCoordinateSpan = MKCoordinateSpan(
+        latitudeDelta: 0.009, longitudeDelta: 0.009)
     
+    @State var region: MKCoordinateRegion;
     
-    
-    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D.init(latitude: , longitude: ),
-                                    latitudinalMeters: 5,
-                                            longitudinalMeters: 5)
+    init(latitude:State<Double>, logitude:State<Double>){
+        _latitude = latitude
+        _longitude = logitude
+        _region = State(initialValue: MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: latitude.wrappedValue, longitude: logitude.wrappedValue),
+            span: self.span))
+    }
     
     var body: some View {
         Map(coordinateRegion: $region)
     }
+    
 }
+    
